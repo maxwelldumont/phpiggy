@@ -1,0 +1,15 @@
+{
+    "name": "maxwe/phpiggy",
+    "authors": [
+        {
+            "name": "Maxwell"
+        }
+    ],
+    "require": {},
+    "autoload": {
+      "psr-4": {
+        "Framework\\": "src/Framework",
+        "App\\": "src/App"
+      }
+    }
+}
