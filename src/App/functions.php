@@ -14,3 +14,10 @@ function escapeHtml(mixed $value): string
 {
   return htmlspecialchars((string) $value);
 }
+
+function redirectTo($path)
+{
+  header("Location: $path");
+  http_response_code(302); //code 302 represents a temporary redirect
+  exit;
+}

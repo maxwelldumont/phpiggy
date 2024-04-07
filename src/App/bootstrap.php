@@ -6,9 +6,14 @@ require __DIR__ . "/../../vendor/autoload.php";
 
 use Framework\App;
 use App\Config\Paths;
+use Dotenv\Dotenv;
 
-use function App\Config\registerMiddleware;
-use function App\Config\registerRoutes;
+use function App\Config\{registerMiddleware, registerRoutes};
+
+// echo "\nPaths: " . Paths::ROOT;
+
+$dotEnv = Dotenv::createImmutable(Paths::ROOT);
+$dotEnv->load();
 
 $app = new App(Paths::SOURCE . "app/container-definitions.php");
 
