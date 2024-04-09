@@ -26,17 +26,34 @@ class UserService
     }
   }
 
-  public function insertUserData($userData)
+  public function create(array $userData)
   {
+    // dd(password_hash($userData['password'], PASSWORD_BCRYPT, ['cost' => 12]));
+
     $sql = "INSERT INTO users (email, password, age, country, social_media_url) values (:email, :password, :age, :country, :social_media_url);";
     $params = [
       'email' => $userData['email'],
-      'password' => $userData['password'],
+      'password' => password_hash($userData['password'], PASSWORD_BCRYPT, ['cost' => 12]),
       'age' => $userData['age'],
       'country' => $userData['country'],
       'social_media_url' => $userData['mySocialMedia']
     ];
 
     $this->db->query($sql, $params);
+  }
+
+  public function login(array $userData)
+  {
+    $user = $this->db->query("SELECT * FROM users WHERE email = :email", [
+      'email' => $userData['email']
+    ])->find();
+
+    $passwordMatch = password_verify($userData['password'], $user['password'] ?? '');
+
+    if (!$user || !$passwordMatch) {
+      throw new ValidationException(['password' => ['Invalid credentials']]);
+    }
+
+    $_SESSION['user'] = $user['id'];
   }
 }
