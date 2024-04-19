@@ -50,10 +50,20 @@ class UserService
 
     $passwordMatch = password_verify($userData['password'], $user['password'] ?? '');
 
+    //dd($passwordMatch);
+
     if (!$user || !$passwordMatch) {
       throw new ValidationException(['password' => ['Invalid credentials']]);
     }
 
+    session_regenerate_id();
     $_SESSION['user'] = $user['id'];
+  }
+
+  public function logout()
+  {
+    unset($_SESSION['user']);
+
+    session_regenerate_id();
   }
 }

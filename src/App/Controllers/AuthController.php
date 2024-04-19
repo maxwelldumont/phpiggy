@@ -28,7 +28,9 @@ class AuthController
     $this->userService->isEmailTaken($_POST['email']);
     $this->userService->create($_POST);
 
+    $this->userService->login($_POST);
     redirectTo('/');
+    // redirectTo('/');
   }
 
   public function loginView()
@@ -38,8 +40,15 @@ class AuthController
 
   public function login()
   {
+    //echo "got here!";
     $this->validatorService->validateLogin($_POST);
     $this->userService->login($_POST);
     redirectTo('/');
+  }
+
+  public function logout()
+  {
+    $this->userService->logout();
+    redirectTo('/login');
   }
 }
