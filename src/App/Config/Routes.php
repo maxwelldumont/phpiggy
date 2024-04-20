@@ -10,6 +10,7 @@ use App\Controllers\AuthController;
 use App\Controllers\{
   HomeController,
   AboutController,
+  ReceiptController,
   TransactionController
 };
 use App\Middleware\{
@@ -32,4 +33,6 @@ function  registerRoutes(App $app)
   $app->get('/transaction/{transaction}', [TransactionController::class, 'editView'])->add(AuthRequiredMiddleware::class);
   $app->post('/transaction/{transaction}', [TransactionController::class, 'editTransaction'])->add(AuthRequiredMiddleware::class);
   $app->delete('/transaction/{transaction}', [TransactionController::class, 'deleteTransaction'])->add(AuthRequiredMiddleware::class);
+  $app->get('/transaction/{transaction}/receipt', [ReceiptController::class, 'uploadView'])->add(AuthRequiredMiddleware::class);
+  $app->post('/transaction/{transaction}/receipt', [ReceiptController::class, 'upload'])->add(AuthRequiredMiddleware::class);
 }

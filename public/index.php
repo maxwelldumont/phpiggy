@@ -8,3 +8,4 @@ require_once __DIR__ . '/../src/App/bootstrap.php';
 
 //dd($_SERVER);
 $app->run();
+

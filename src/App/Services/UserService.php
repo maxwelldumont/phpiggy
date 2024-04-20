@@ -28,15 +28,15 @@ class UserService
 
   public function create(array $userData)
   {
-    // dd(password_hash($userData['password'], PASSWORD_BCRYPT, ['cost' => 12]));
+    // dd($userData['socialMediaURL']);
 
-    $sql = "INSERT INTO users (email, password, age, country, social_media_url) values (:email, :password, :age, :country, :social_media_url);";
+    $sql = "INSERT INTO users (email, password, age, country, social_media_url,created_at, updated_at) values (:email, :password, :age, :country, :social_media_url, now(), now());";
     $params = [
       'email' => $userData['email'],
       'password' => password_hash($userData['password'], PASSWORD_BCRYPT, ['cost' => 12]),
       'age' => $userData['age'],
       'country' => $userData['country'],
-      'social_media_url' => $userData['mySocialMedia']
+      'social_media_url' => $userData['socialMediaURL']
     ];
 
     $this->db->query($sql, $params);

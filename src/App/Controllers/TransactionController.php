@@ -51,7 +51,7 @@ class TransactionController
     // dd($params);
     $this->validatorService->validateTransaction($_POST);
     $this->transactionService->update($_POST, $params['transaction']);
-    redirectTo($_SERVER['HTTP_REFERER']);
+    redirectTo('/');
   }
 
   public function deleteTransaction($params)

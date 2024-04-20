@@ -7,7 +7,8 @@ use App\Config\Paths;
 use App\Services\{
   TransactionService,
   UserService,
-  ValidatorService
+  ValidatorService,
+  ReceiptService
 };
 
 return [
@@ -36,5 +37,11 @@ return [
     $db = $container->getDependency(Database::class);
 
     return new TransactionService($db);
+  },
+
+  ReceiptService::class => function (Container $container) {
+    $db = $container->getDependency(Database::class);
+
+    return new ReceiptService($db);
   },
 ];

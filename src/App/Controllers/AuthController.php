@@ -35,6 +35,7 @@ class AuthController
 
   public function loginView()
   {
+    // echo"got here!";
     echo $this->view->render('/login.php');
   }
 
