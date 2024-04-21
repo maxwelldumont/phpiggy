@@ -24,9 +24,9 @@ class ReceiptService
         }
 
         //validate file size:
-        $maxFileSizeMB = 3  * 1024 * 1024;
+        $maxFileSizeBytes = 3  * 1024 * 1024;
 
-        if ($file['size'] > $maxFileSizeMB) {
+        if ($file['size'] > $maxFileSizeBytes) {
             throw new ValidationException([
                 'receipt' => ['File upload exceeds size limit of 3MB']
             ]);
@@ -73,6 +73,61 @@ class ReceiptService
                 'storage_filename' => $newFileName,
                 'media_type' => $file['type'],
                 'transaction_id' => $transactionId
+            ]
+        );
+    }
+
+    public function getReceipt(string $id)
+    {
+        $receipt = $this->db->query(
+            "SELECT * FROM receipts WHERE id = :id",
+            ['id' => $id]
+        )->find();
+
+        return $receipt;
+    }
+
+    public function getReceipts(string $id)
+    {
+        $receipt = $this->db->query(
+            "SELECT * FROM receipts WHERE transaction_id = :id",
+            ['id' => $id]
+        )->find();
+
+        return $receipt;
+    }
+
+    public function read(array $receipt)
+    {
+        //get file path
+        $filePath = Paths::STORAGE_UPLOADS . '/' . $receipt['storage_filename'];
+
+        //check if file exists
+
+        if (!file_exists($filePath)) {
+            redirectTo('/');
+        }
+
+        //update the html headers 'Content-Disposition' and 'Content-Type'
+        header("Content-Disposition: inline;filename={$receipt['original_filename']}");
+        header("Content-Type: {$receipt['media_type']}");
+
+        //pass the path to readfile()
+        readfile($filePath);
+    }
+
+    public function delete(array $receipt)
+    {
+        //delete file from storage
+        $filePath = Paths::STORAGE_UPLOADS . '/' . $receipt['storage_filename'];
+        unlink($filePath);
+
+        //remove file record from database
+
+        $this->db->query(
+            "DELETE FROM receipts WHERE id = :id;",
+            [
+                'id' => $receipt['id']
             ]
         );
     }

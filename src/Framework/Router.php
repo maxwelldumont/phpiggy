@@ -8,6 +8,7 @@ class Router
 {
   private array $routes = array();
   private array $middlewares = array();
+  private array $errorHandler;
 
   public function add(string $method, string $path, array $controller)
   {
@@ -73,6 +74,9 @@ class Router
 
       return;
     }
+
+    //if no route found display 404 error page:
+    $this->dispatchNotFound($container);
   }
 
   public function addMiddleware(string $middleware)
@@ -89,5 +93,28 @@ class Router
   public function resolveClass(Container $container, string $class)
   {
     return $container ? $container->resolve($class) : new $class;
+  }
+
+  public function setErrorHandler(array $controller)
+  {
+    $this->errorHandler = $controller;
+  }
+
+  public function dispatchNotFound(Container $container = null)
+  {
+    [$class, $function] = $this->errorHandler;
+
+    //check if a container exists if so resolve any dependancies for the class
+    $controllerInstance = $this->resolveClass($container, $class);
+
+    $action = fn () => $controllerInstance->$function();
+
+    //execute middleware
+    foreach ($this->middlewares as $middleware) {
+      $middlewareInstance = $this->resolveClass($container, $middleware);
+      $action = fn () => $middlewareInstance->process($action);
+    }
+
+    $action();
   }
 }

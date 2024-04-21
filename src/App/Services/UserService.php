@@ -62,8 +62,21 @@ class UserService
 
   public function logout()
   {
-    unset($_SESSION['user']);
+    // unset($_SESSION['user']); //used in cases where for example we want to continue recording user data after they log out
+    //instead destroy all session data
+    session_destroy();
 
-    session_regenerate_id();
+    // session_regenerate_id(); //assigns a new cookie id but does not destroy it
+    //to destroy a cookie we must reset the expiration date to now(). this will case the browser to drop the old cookie;
+    $params = session_get_cookie_params();
+    setcookie(
+      'PHPSESSID',
+      '', //how this is the l
+      time() - 3600, //get current time - 3600 seconds to ensure cookie has expired
+      $params['path'],
+      $params['domain'],
+      $params['secure'],
+      $params['httponly']
+    );
   }
 }
