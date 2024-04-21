@@ -16,8 +16,8 @@ class TransactionService
   {
     $formattedDate = "{$formData['date']} 00:00:00";
     $this->db->query(
-      "INSERT INTO transactions(user_id, description, amount, date)
-      VALUES(:user_id, :description, :amount, :date);",
+      "INSERT INTO transactions(user_id, description, amount, date, created_at, updated_at)
+      VALUES(:user_id, :description, :amount, :date, now(), now());",
       [
         'user_id' => $_SESSION['user'],
         'description' => $formData['description'],
@@ -59,6 +59,15 @@ class TransactionService
        LIMIT {$length} OFFSET {$offset};",
       $parameters
     )->findAll();
+
+    $transactions = array_map(function ($transaction) {
+      $transaction['receipts'] = $this->db->query(
+        "SELECT * FROM receipts WHERE transaction_id = :transaction_id",
+        ['transaction_id' => $transaction['id']]
+      )->findAll();
+
+      return $transaction;
+    }, $transactions);
 
     $transactionCount = $this->db->query(
       "SELECT COUNT(*) FROM transactions 
